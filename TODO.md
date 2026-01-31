@@ -17,9 +17,9 @@ i have to create a agent that will send his cre
 ```
 [✅]1 .configure the Deno.json file.
 [✅]2. create the client.js
-3. create a connection in client.js 
-4. test the connection with the prototype
-5. validate request structure
+[✅]3. create a connection in client.js 
+[✅]4. test the connection with the prototype
+[✅]  5. validate request structure
 ```
 
 # request Data Structure
