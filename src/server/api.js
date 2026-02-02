@@ -32,10 +32,11 @@ export const createUser = (users, request) => {
   });
 };
 
-export const fetchPara = async (paragraphs) => {
+export const fetchPara = async () => {
   const paragraph = await getParagraph(40);
 
-  console.log(createSuccessResponse(paragraph));
-
   return createSuccessResponse(paragraph);
+};
+export const startUserInput = () => {
+  return "startTyping";
 };

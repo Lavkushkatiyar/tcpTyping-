@@ -1,12 +1,11 @@
-import { getParagraph } from "./monkey-type.js";
-import { startTypingSession } from "./typing-simulator.js";
+// import { startTypingSession } from "./typing-simulator.js";
 import { calculateWPM, countIncorrectWords, displayWPM } from "./utils.js";
 
-const main = async (length) => {
-  const paragraph = await getParagraph(length);
+const main = () => {
+  const paragraph = userSession.paragraph;
   const startTime = Date.now();
 
-  const userTypedWords = await startTypingSession(paragraph.split(""));
+  const userTypedWords = userSession.typedWords;
 
   const endTime = Date.now();
 
@@ -20,6 +19,7 @@ const main = async (length) => {
   );
 
   displayWPM(typingMetrics);
+  return typingMetrics;
 };
 
 main(40);

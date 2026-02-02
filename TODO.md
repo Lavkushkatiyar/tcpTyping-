@@ -40,3 +40,22 @@ i have to create a agent that will send his cre
 command : "FETCH_PARAGRAPH"
 
 [] next step take the data and sends it to our app and starts typing []
+
+# step to do now
+
+implement the take input from the user ' we will take input from user and server
+will send whole para to the app '
+
+' we will take the whole paragraphs wrote by the user and then we will compute
+the result and send it to sever' 'server must send it to the user '
+
+- or display it there
+
+# userSession Structure
+
+```js
+userSession = {
+  userParagraph: "",
+  userTypedWords: "",
+};
+```

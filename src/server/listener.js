@@ -13,16 +13,18 @@ const readFromConnection = async (conn, buffer) => {
 const router = async (users, paragraphs, command, args) => {
   switch (command) {
     case "CREATE":
-      return createUser(users, args);
+      return createUser(users, args, userSession);
 
     case "FETCH_PARAGRAPH":
-      return await fetchPara(paragraphs);
+      return await fetchPara(paragraphs, userSession);
 
     case "CREATE_USER":
-      return addUser(users, args);
+      return addUser(users, args, userSession);
 
     case "FETCH_USERS":
-      return fetchUsers(users);
+      return fetchUsers(users, userSession);
+    case "START":
+      return startUserInput(userSession);
   }
 };
 
@@ -41,7 +43,9 @@ const handler = async (users, paragraphs, conn) => {
       paragraphs,
       request.command,
       request.data,
+      userSession,
     );
+
     await conn.write(encode(JSON.stringify(response)));
   }
 };
@@ -54,9 +58,10 @@ const startCentral = async () => {
   const paragraphs = data;
 
   for await (const conn of listener) {
+    const userSession = { paragraph: "", typedWord: "" };
     console.log(`Connection established : `);
 
-    await handler(users, {
+    await handler(users, userSession, {
       paragraphs,
       length: Object.keys(paragraphs).length,
     }, conn);
