@@ -34,3 +34,9 @@ i have to create a agent that will send his cre
     }
   }
 ```
+
+# show the paragraph to the user
+
+command : "FETCH_PARAGRAPH"
+
+[] next step take the data and sends it to our app and starts typing []

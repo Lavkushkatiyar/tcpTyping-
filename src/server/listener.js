@@ -27,16 +27,23 @@ const router = async (users, paragraphs, command, args) => {
 };
 
 const handler = async (users, paragraphs, conn) => {
-  const buffer = new Uint8Array(1024);
-  const request = await readFromConnection(conn, buffer);
+  while (true) {
+    const buffer = new Uint8Array(1024);
+    const request = await readFromConnection(conn, buffer);
+    if (request.command === "EXIT") {
+      conn.write(encode(JSON.stringify("Thank You")));
+      conn.close();
 
-  const response = await router(
-    users,
-    paragraphs,
-    request.command,
-    request.data,
-  );
-  await conn.write(encode(JSON.stringify(response)));
+      break;
+    }
+    const response = await router(
+      users,
+      paragraphs,
+      request.command,
+      request.data,
+    );
+    await conn.write(encode(JSON.stringify(response)));
+  }
 };
 
 const startCentral = async () => {

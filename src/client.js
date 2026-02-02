@@ -20,17 +20,27 @@ export const getUserDetails = () => {
   const request = { command, data: { userName, password, userId } };
   return request;
 };
+const sampleRequest = () => {
+  const userDetails = JSON.stringify(getUserDetails());
+  const fetchRequest = JSON.stringify({ command: "FETCH_PARAGRAPH", data: {} });
+  const exit = JSON.stringify({ command: "EXIT", data: {} });
+  return [userDetails, fetchRequest, exit];
+};
+
+const handleRequests = async (connection, requests) => {
+  for (const request of requests) {
+    await connection.write(encoder.encode(request));
+
+    const buffer = new Uint8Array(1024);
+    const readBytes = await connection.read(buffer);
+
+    console.log(decoder.decode(buffer).slice(0, readBytes));
+  }
+};
 
 const main = async (hostname, port) => {
   const connection = await connectToServer(hostname, port);
-
-  const userDetails = JSON.stringify(getUserDetails());
-  const request = JSON.stringify({ command: "FETCH_PARAGRAPH", data: {} });
-  await connection.write(encoder.encode(request));
-
-  const buffer = new Uint8Array(1024);
-  const readBytes = await connection.read(buffer);
-
-  console.log(decoder.decode(buffer).slice(0, readBytes));
+  const requests = sampleRequest();
+  await handleRequests(connection, requests);
 };
 main(HOSTNAME, PORT);
