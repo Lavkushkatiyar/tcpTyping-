@@ -22,4 +22,4 @@ const main = async (length) => {
   displayWPM(typingMetrics);
 };
 
-main(Number(Deno.args[0]));
+main(40);
