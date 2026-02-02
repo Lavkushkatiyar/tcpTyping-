@@ -7,8 +7,11 @@ export const connectToServer = (hostname, port) => {
   return userConnection;
 };
 export const getUserDetails = () => {
+  const command = "CREATE";
   const userName = "LAVKUSH";
-  const command = "Create";
+  const userId = "LAV123";
+
   const password = "1234";
-  return { userName, command, password };
+  const request = { command, data: { userName, password, userId } };
+  return request;
 };
