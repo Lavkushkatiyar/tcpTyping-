@@ -1,15 +1,31 @@
-const localParagraphs = () => {
-  const para1 =
-    "A small café on the corner sold fresh bread every morning. Customers arrived with newspapers and umbrellas, traded stories with the baker, and left with paper bags warm from the oven.";
+export const calculateWPM = (start, end, paragraph, noOfWrongWords) => {
+  const totalWords = paragraph.split(" ").length;
+  const correctWords = totalWords - noOfWrongWords;
+  const durationMinutes = ((end - start + 500) / 1000) / 60;
 
-  const para2 =
-    "The quick brown fox jumps over the lazy dog while morning light spills across the quiet street, and a distant bell marks the hour.";
-
-  const para3 =
-    "Typing practice builds speed and accuracy. Focus on correct finger placement, maintain rhythm, and improve one small step each day.";
-
-  return [para1, para2, para3];
+  const grossWPM = correctWords / durationMinutes;
+  const rawWPM = totalWords / durationMinutes;
+  const accuracy = correctWords / totalWords * 100;
+  return { grossWPM, rawWPM, accuracy };
 };
 
-const randomIndex = Math.floor(Math.random() * 3);
-export const fetchParagraph = () => localParagraphs()[randomIndex];
+export const formatTypingStats = ({ grossWPM, rawWPM, accuracy }) => {
+  const resultMessage = `Typing Results:\n
+    Gross WPM : ${grossWPM.toFixed(2)} WPM\n
+    Raw WPM   : ${rawWPM.toFixed(2)} WPM\n
+    Accuracy  : ${accuracy} %`;
+
+  return resultMessage;
+};
+
+export const countIncorrectWords = (userInputs, paragraph) => {
+  const sentence = userInputs.join("");
+  const words = sentence.split(" ");
+  const actualWords = paragraph.split(" ");
+
+  const incorrectWords = words.filter((word, index) =>
+    word !== actualWords[index]
+  );
+
+  return incorrectWords.length;
+};

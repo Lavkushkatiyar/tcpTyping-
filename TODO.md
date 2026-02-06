@@ -57,5 +57,6 @@ the result and send it to sever' 'server must send it to the user '
 userSession = {
   userParagraph: "",
   userTypedWords: "",
+  startTime,
 };
 ```
