@@ -1,6 +1,6 @@
 import { beforeEach, describe, it } from "@std/testing/bdd";
 import { assertEquals } from "@std/assert";
-import { createUser, fetchUsers, updateUserStats } from "../src/api.js";
+import { createUser, updateUserStats } from "../src/handler.js";
 
 describe("typing-monkey", () => {
   describe("addUserCredentials", () => {
@@ -58,29 +58,6 @@ describe("typing-monkey", () => {
       });
       assertEquals(users, {
         "someone123": { userName: "someone", password: "12345" },
-      });
-    });
-  });
-
-  describe("fetchUsers", () => {
-    let users;
-    beforeEach(() => users = {});
-
-    it("fetch users", () => {
-      createUser(users, { userName: "abc", userId: "abc123" });
-      createUser(users, { userName: "someone", userId: "someone123" });
-      assertEquals(fetchUsers(users), {
-        success: true,
-        body: users,
-        error: {},
-      });
-    });
-
-    it("users not present", () => {
-      assertEquals(fetchUsers(users), {
-        success: true,
-        body: users,
-        error: {},
       });
     });
   });

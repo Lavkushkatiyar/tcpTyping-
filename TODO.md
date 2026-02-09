@@ -61,4 +61,5 @@ userSession = {
 };
 ```
 
-we have to implement Deno.serve
+we have to implement Deno.serve add consistency in the code by making response
+consistent

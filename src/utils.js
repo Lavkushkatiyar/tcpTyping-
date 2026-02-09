@@ -1,7 +1,7 @@
 export const calculateWPM = (start, end, paragraph, noOfWrongWords) => {
   const totalWords = paragraph.split(" ").length;
   const correctWords = totalWords - noOfWrongWords;
-  const durationMinutes = ((end - start + 500) / 1000) / 60;
+  const durationMinutes = ((end - start) / 1000) / 60;
 
   const grossWPM = correctWords / durationMinutes;
   const rawWPM = totalWords / durationMinutes;
@@ -11,29 +11,31 @@ export const calculateWPM = (start, end, paragraph, noOfWrongWords) => {
 
 export const formatTypingStats = ({ grossWPM, rawWPM, accuracy }) => {
   const resultMessage = `Typing Results:\n
-    Gross WPM : ${grossWPM.toFixed(2)} WPM\n
-    Raw WPM   : ${rawWPM.toFixed(2)} WPM\n
-    Accuracy  : ${accuracy} %`;
+      Gross WPM : ${grossWPM.toFixed(2)} WPM\n
+      Raw WPM   : ${rawWPM.toFixed(2)} WPM\n
+      Accuracy  : ${accuracy} %`;
 
   return resultMessage;
 };
 
-export const countIncorrectWords = (userInputs, paragraph) => {
-  const userWordsContainer = Array.from({ length: paragraph.length }); // [better name required]
+export const countIncorrectWords = (typedCharacters, referenceParagraph) => {
+  const typedSentence = typedCharacters.join("");
 
-  const sentence = userInputs.join("");
+  const typedWords = typedSentence.split(" ");
 
-  const userWords = sentence.split(" "); //user typed
+  const referenceWords = referenceParagraph.split(" ");
 
-  for (let index = 0; index < userWords.length; index++) { // [can be optimized with maybe map]
-    userWordsContainer[index] = userWords[index];
-  }
-
-  const actualWords = paragraph.split(" "); //original
-
-  const incorrectWords = userWordsContainer.filter((word, index) =>
-    word !== actualWords[index]
+  const maxWordCount = Math.max(
+    typedWords.length,
+    referenceWords.length,
   );
 
-  return incorrectWords.length;
+  const typedWordsBuffer = Array.from({ length: maxWordCount })
+    .map((_, index) => typedWords[index]);
+
+  const incorrectWordCount = typedWordsBuffer
+    .filter((typedWord, index) => typedWord !== referenceWords[index])
+    .length;
+
+  return incorrectWordCount;
 };
