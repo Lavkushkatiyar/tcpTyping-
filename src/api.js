@@ -11,6 +11,8 @@ const createFailureResponse = (error) => ({
 });
 
 export const createUser = (usersCredentials, users, typingStats) => {
+  console.log("in create user");
+
   if (usersCredentials.userId === undefined) {
     return createFailureResponse({
       errorCode: 11,
@@ -43,6 +45,26 @@ export const createUser = (usersCredentials, users, typingStats) => {
     userId: usersCredentials.userId,
     userName: users[usersCredentials.userId].userName,
   });
+};
+
+export const isUserExist = (usersCredentials, users) => {
+  return usersCredentials.userId in users;
+};
+
+export const validateUser = (usersCredentials, users) => {
+  const isUser = isUserExist(usersCredentials, users);
+
+  const user = users[usersCredentials.userId];
+
+  const isValidPassword = usersCredentials.password === user.password;
+
+  if (isUser && isValidPassword) {
+    return createSuccessResponse({
+      userId: usersCredentials.userId,
+      userName: users[usersCredentials.userId].userName,
+    });
+  }
+  return createFailureResponse({ error: "User doesn't exist " });
 };
 
 export const fetchUsers = (users) => {

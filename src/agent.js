@@ -1,6 +1,11 @@
 import { getTypingStats } from "./monkey-type.js";
 import { getParagraph } from "./paragraph-api.js";
-import { createUser, updateUserStats } from "./api.js";
+import {
+  createUser,
+  isUserExist,
+  updateUserStats,
+  validateUser,
+} from "./api.js";
 
 const decode = (data) => new TextDecoder().decode(data);
 const encode = (data) => new TextEncoder().encode(data);
@@ -44,7 +49,7 @@ const getUserCredentials = () => { // Ui Part
   return usersCredentials;
 };
 
-const users = {};
+const users = {}; // change to db later
 
 const typingStats = {}; // change to db later
 
@@ -52,18 +57,32 @@ const apiHandler = (command, usersCredentials) => {
   switch (command) {
     case "CREATE_USER":
       return createUser(usersCredentials, users, typingStats);
+    case "LOGIN_USER":
+      return validateUser(usersCredentials, users);
   }
 };
 
-const signUp = (conn) => {
+const userSignUp = (conn) => {
   const usersCredentials = getUserCredentials(conn);
-  const response = apiHandler("CREATE_USER", usersCredentials);
+  if (!isUserExist(usersCredentials, users)) {
+    const response = apiHandler("CREATE_USER", usersCredentials);
+    if (response.success) {
+      return { conn, userId: response.body.userId };
+    }
+  }
+
+  return { conn, error: "can't sign Up" };
+};
+
+const userLogin = (conn) => {
+  const usersCredentials = getUserCredentials(conn);
+  const response = apiHandler("LOGIN_USER", usersCredentials);
 
   if (response.success) {
     return { conn, userId: response.body.userId };
   }
 
-  return { conn, error: "can't sign Up" };
+  return { conn, error: "can't login " };
 };
 
 const userRequestHandler = async (request, userSession) => {
@@ -73,17 +92,25 @@ const userRequestHandler = async (request, userSession) => {
   }
 };
 
-const signInOrLogin = (conn) => {
-  const command = "signUp";
+const signInOrLogin = async (conn) => {
+  await conn.write(encode("login or signup: "));
+  const buffer = new Uint8Array(1024);
+  const readBytes = await conn.read(buffer);
+  const command = decode(buffer.slice(0, readBytes)).trim();
+  // const command = prompt();
 
   switch (command) {
     case "signUp":
-      return signUp(conn);
+      return userSignUp(conn);
+    case "login":
+      return userLogin(conn);
   }
 };
 
 export const handleConn = async (conn) => {
-  const userSession = signInOrLogin(conn);
+  const userSession = await signInOrLogin(conn);
+  console.log(typingStats);
+  console.log(users);
 
   await conn.write(encode("ENTER YOUR Command: ")); // sign up
 
@@ -92,6 +119,6 @@ export const handleConn = async (conn) => {
   const request = decode(buffer.slice(0, readBytes)).trim();
   const response = await userRequestHandler(request, userSession);
 
-  console.log(response);
+  console.log(typingStats);
   conn.close();
 };
