@@ -49,14 +49,16 @@ export const fetchUsers = (users) => {
   return createSuccessResponse(users);
 };
 
-export const updateUserStats = (users, userId, data) => {
-  if (!(userId in users)) {
+export const updateUserStats = (typingStats, userId, data) => {
+  if (!(userId in typingStats)) {
     return createFailureResponse({
       errorCode: 12,
       errorMessage: `Error: user ${userId} doesn't exist`,
     });
   }
 
-  users[userId].stats = data.stats;
-  return createSuccessResponse({ userId, ...users[userId] });
+  typingStats[userId].stats = data;
+  // console.log(typingStats);
+
+  return createSuccessResponse({ userId, ...typingStats[userId] });
 };

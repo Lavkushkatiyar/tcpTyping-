@@ -16,6 +16,6 @@ export const getTypingStats = ({ paragraph, startTime, userTypedWords }) => {
     incorrectWords,
   );
 
-  const stats = formatTypingStats(typingMetrics);
-  return stats;
+  // const stats = formatTypingStats(typingMetrics);
+  return typingMetrics;
 };
