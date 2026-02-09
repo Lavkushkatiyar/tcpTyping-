@@ -19,11 +19,19 @@ export const formatTypingStats = ({ grossWPM, rawWPM, accuracy }) => {
 };
 
 export const countIncorrectWords = (userInputs, paragraph) => {
+  const userWordsContainer = Array.from({ length: paragraph.length }); // [better name required]
+
   const sentence = userInputs.join("");
-  const words = sentence.split(" "); //user typed
+
+  const userWords = sentence.split(" "); //user typed
+
+  for (let index = 0; index < userWords.length; index++) { // [can be optimized with maybe map]
+    userWordsContainer[index] = userWords[index];
+  }
+
   const actualWords = paragraph.split(" "); //original
 
-  const incorrectWords = words.filter((word, index) =>
+  const incorrectWords = userWordsContainer.filter((word, index) =>
     word !== actualWords[index]
   );
 
