@@ -20,8 +20,8 @@ export const formatTypingStats = ({ grossWPM, rawWPM, accuracy }) => {
 
 export const countIncorrectWords = (userInputs, paragraph) => {
   const sentence = userInputs.join("");
-  const words = sentence.split(" ");
-  const actualWords = paragraph.split(" ");
+  const words = sentence.split(" "); //user typed
+  const actualWords = paragraph.split(" "); //original
 
   const incorrectWords = words.filter((word, index) =>
     word !== actualWords[index]
