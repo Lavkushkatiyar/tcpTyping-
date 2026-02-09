@@ -1,4 +1,4 @@
-import { getTypingStats } from "./monkey_type.js";
+import { getTypingStats } from "./typing.js";
 import { getParagraph } from "./paragraph_api.js";
 import { updateUserStats } from "./handler.js";
 import { userLogin, userSignUp } from "./user/user_service.js";
@@ -10,7 +10,7 @@ const sendTypingResult = async (conn, result) => {
   await conn.write(encode(result));
 };
 
-const startTypingSession = async ({ conn, userId }) => {
+const startTypingSession = async ({ conn, userId }, typingStats) => {
   const paragraph = await getParagraph();
 
   const buffer = new Uint8Array(paragraph.length);
@@ -27,22 +27,23 @@ const startTypingSession = async ({ conn, userId }) => {
     userTypedWords: userInput.split(""),
     startTime,
   });
+  console.log(typingMetrics);
 
   updateUserStats(typingStats, userId, typingMetrics);
 
   await sendTypingResult(conn, typingMetrics);
 };
 
-const typingStats = {}; // change to db later
-
-const userRequestHandler = async (request, userSession) => {
-  switch (request) {
-    case "start":
-      return await startTypingSession(userSession);
+const userRequestHandler = async (request, userSession, typingStats) => {
+  const userRequestMap = {
+    "start": startTypingSession,
+  };
+  if (userRequestMap[request]) {
+    return await userRequestMap[request](userSession, typingStats);
   }
 };
 
-const signInOrLogin = async (conn, typingStats) => {
+const signInOrLogin = async (conn, users, typingStats) => {
   const authRouter = {
     "signUp": userSignUp,
     "login": userLogin,
@@ -51,23 +52,26 @@ const signInOrLogin = async (conn, typingStats) => {
   await conn.write(encode("login or signup: "));
 
   const command = await readFromConnection(conn);
-  return authRouter[command](conn, typingStats);
+  if (authRouter[command]) {
+    return authRouter[command](conn, users, typingStats);
+  }
 };
 
 const readFromConnection = async (conn) => {
   const buffer = new Uint8Array(1024);
-  console.log("i was there");
-
   const readBytes = await conn.read(buffer);
   return decode(buffer.slice(0, readBytes)).trim();
 };
 
-export const handleConn = async (conn) => {
-  const userSession = await signInOrLogin(conn, typingStats);
+export const handleConn = async (conn, typingStats, users) => {
+  const userSession = await signInOrLogin(conn, users, typingStats);
+  console.log(typingStats);
+
   await conn.write(encode("ENTER YOUR Command: "));
   const request = await readFromConnection(conn);
-  const response = await userRequestHandler(request, userSession);
+  const response = await userRequestHandler(request, userSession, typingStats);
 
   console.log(typingStats);
+
   conn.close();
 };

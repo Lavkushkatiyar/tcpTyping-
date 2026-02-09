@@ -61,5 +61,21 @@ userSession = {
 };
 ```
 
+```TODOS
+[] i have to keep the variable users and typingStats global later i will change it into database or .json files
+
+
+
+
+[]refactoring the code 
+  fix naming of the functions 
+  fix the structure
+
+
+  
+  extract functions into respected files if possible 
 we have to implement Deno.serve add consistency in the code by making response
 consistent
+
+we wil
+```

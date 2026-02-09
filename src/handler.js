@@ -11,17 +11,10 @@ const createFailureResponse = (error) => ({
 });
 
 export const createUser = (usersCredentials, users, typingStats) => {
-  if (usersCredentials.userId === undefined) {
-    return createFailureResponse({
-      errorCode: 11,
-      errorMessage: `Error: userId is undefined`,
-    });
-  }
-
   if (usersCredentials.userId in users) {
     return createFailureResponse({
       errorCode: 10,
-      errorMessage: `Error: userId ${usersCredentials.userId} already exist`,
+      errorMessage: `userId ${usersCredentials.userId} already exist`,
     });
   }
 
@@ -33,9 +26,9 @@ export const createUser = (usersCredentials, users, typingStats) => {
   typingStats[usersCredentials.userId] = {
     userName: usersCredentials.userName,
     stats: {
-      "grossWPM": 0,
-      "rawWPM": 0,
-      "accuracy": 0,
+      grossWPM: 0,
+      rawWPM: 0,
+      accuracy: 0,
     },
   };
 
@@ -51,18 +44,19 @@ export const isUserExist = (usersCredentials, users) => {
 
 export const validateUser = (usersCredentials, users) => {
   const isUser = isUserExist(usersCredentials, users);
-
   const user = users[usersCredentials.userId];
 
-  const isValidPassword = usersCredentials.password === user.password;
-
-  if (isUser && isValidPassword) {
+  if (isUser && usersCredentials.password === user.password) {
     return createSuccessResponse({
       userId: usersCredentials.userId,
-      userName: users[usersCredentials.userId].userName,
+      userName: user.userName,
     });
   }
-  return createFailureResponse({ error: "User doesn't exist " });
+
+  return createFailureResponse({
+    errorCode: 12,
+    errorMessage: "User doesn't exist",
+  });
 };
 
 export const updateUserStats = (typingStats, userId, data) => {
@@ -72,6 +66,7 @@ export const updateUserStats = (typingStats, userId, data) => {
       errorMessage: `Error: user ${userId} doesn't exist`,
     });
   }
+
   typingStats[userId].stats = data;
 
   return createSuccessResponse({ userId, ...typingStats[userId] });

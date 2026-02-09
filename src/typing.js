@@ -1,8 +1,4 @@
-import {
-  calculateWPM,
-  countIncorrectWords,
-  formatTypingStats,
-} from "./utils.js";
+import { calculateWPM, countIncorrectWords } from "./utils.js";
 
 export const getTypingStats = ({ paragraph, startTime, userTypedWords }) => {
   const endTime = Date.now();

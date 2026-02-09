@@ -1,8 +1,6 @@
 import { createUser, isUserExist, validateUser } from "../handler.js";
 
-const users = {}; // change to db later // needs to be in the main function and we will pass it from there only
-
-const handler = (command, usersCredentials, typingStats) => {
+const handler = (command, usersCredentials, users, typingStats) => {
   switch (command) {
     case "CREATE_USER":
       return createUser(usersCredentials, users, typingStats);
@@ -11,7 +9,7 @@ const handler = (command, usersCredentials, typingStats) => {
   }
 };
 
-const getUserCredentials = () => {
+const getUserCredentials = (conn) => {
   const usersCredentials = {
     userId: "username123",
     userName: "username",
@@ -23,11 +21,16 @@ const getUserCredentials = () => {
   return usersCredentials;
 };
 
-export const userSignUp = (conn, typingStats) => {
+export const userSignUp = (conn, users, typingStats) => {
   const usersCredentials = getUserCredentials(conn);
 
   if (!isUserExist(usersCredentials, users)) {
-    const response = handler("CREATE_USER", usersCredentials, typingStats);
+    const response = handler(
+      "CREATE_USER",
+      usersCredentials,
+      users,
+      typingStats,
+    );
     if (response.success) {
       return { conn, userId: response.body.userId };
     }
@@ -36,9 +39,9 @@ export const userSignUp = (conn, typingStats) => {
   return { conn, error: "can't sign Up" };
 };
 
-export const userLogin = (conn) => {
+export const userLogin = (conn, users) => {
   const usersCredentials = getUserCredentials(conn);
-  const response = handler("LOGIN_USER", usersCredentials);
+  const response = handler("LOGIN_USER", usersCredentials, users);
 
   if (response.success) {
     return { conn, userId: response.body.userId };

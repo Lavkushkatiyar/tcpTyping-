@@ -1,6 +1,8 @@
 import { handleConn } from "./src/agent.js";
 
 const main = async () => {
+  const typingStats = {}; // change it to db or json
+  const users = {}; // change it to db or json
   const listener = Deno.listen({
     port: 8000,
   });
@@ -8,7 +10,8 @@ const main = async () => {
   console.log("server started on hostname : 192.168.1.66");
   for await (const conn of listener) {
     console.log("connection established");
-    handleConn(conn);
+
+    handleConn(conn, typingStats, users);
   }
 };
 main();
