@@ -1,4 +1,4 @@
-import { createUser, isUserExist, validateUser } from "../handler.js";
+import { createUser, doesUserExist, validateUser } from "./user_services.js";
 
 const handler = (command, usersCredentials, users, typingStats) => {
   switch (command) {
@@ -24,7 +24,7 @@ const getUserCredentials = (conn) => {
 export const userSignUp = (conn, users, typingStats) => {
   const usersCredentials = getUserCredentials(conn);
 
-  if (!isUserExist(usersCredentials, users)) {
+  if (!doesUserExist(usersCredentials, users)) {
     const response = handler(
       "CREATE_USER",
       usersCredentials,

@@ -1,6 +1,6 @@
 import { beforeEach, describe, it } from "@std/testing/bdd";
 import { assertEquals } from "@std/assert";
-import { createUser, updateUserStats } from "../src/handler.js";
+import { createUser, updateUserStats } from "../src/user/user_services.js";
 
 describe("typing-monkey", () => {
   describe("addUserCredentials", () => {
@@ -52,8 +52,7 @@ describe("typing-monkey", () => {
         body: {},
         error: {
           errorCode: 10,
-          errorMessage:
-            `Error: userId ${usersCredentials.userId} already exist`,
+          errorMessage: `userId ${usersCredentials.userId} already exist`,
         },
       });
       assertEquals(users, {

@@ -1,7 +1,7 @@
-import { getTypingStats } from "./typing.js";
+import { getTypingStats } from "./typing_stats.js";
 import { getParagraph } from "./paragraph_api.js";
-import { updateUserStats } from "./handler.js";
-import { userLogin, userSignUp } from "./user/user_service.js";
+import { updateUserStats } from "./user/user_services.js";
+import { userLogin, userSignUp } from "./user/user_auth.js";
 
 const decode = (data) => new TextDecoder().decode(data);
 const encode = (data) => new TextEncoder().encode(data);

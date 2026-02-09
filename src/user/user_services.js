@@ -38,12 +38,12 @@ export const createUser = (usersCredentials, users, typingStats) => {
   });
 };
 
-export const isUserExist = (usersCredentials, users) => {
+export const doesUserExist = (usersCredentials, users) => {
   return usersCredentials.userId in users;
 };
 
 export const validateUser = (usersCredentials, users) => {
-  const isUser = isUserExist(usersCredentials, users);
+  const isUser = doesUserExist(usersCredentials, users);
   const user = users[usersCredentials.userId];
 
   if (isUser && usersCredentials.password === user.password) {
