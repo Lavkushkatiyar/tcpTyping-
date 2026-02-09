@@ -1,5 +1,6 @@
 import { getTypingStats } from "./monkey-type.js";
 import { getParagraph } from "./paragraph-api.js";
+import { addCredentials } from "./api.js";
 
 const decode = (data) => new TextDecoder().decode(data);
 const encode = (data) => new TextEncoder().encode(data);
@@ -27,22 +28,54 @@ const startTypingSession = async (conn) => {
   });
 
   await sendTypingResult(conn, typingMetrics);
+  // send to api
   console.log(userInput, para, typingMetrics);
 };
 
-const router = async (command, conn) => {
+const getUserCredentials = () => {
+  const usersCredentials = {
+    "userId": "username123",
+    "userName": "username",
+    "password": "12345",
+  };
+
+  // prompt user input
+  // parse
+  return usersCredentials;
+};
+
+const users = {};
+const apiHandler = (command, usersCredentials) => {
   switch (command) {
+    case "CREATE_USER":
+      return addCredentials(usersCredentials, users);
+  }
+};
+
+const signUp = (conn) => {
+  const usersCredentials = getUserCredentials(conn);
+
+  return apiHandler("CREATE_USER", usersCredentials);
+};
+
+const userRequestHandler = async (request, conn) => {
+  const { command, data } = request;
+  switch (request) {
     case "start":
       return await startTypingSession(conn);
+    case "signUp":
+      return await signUp(conn);
   }
 };
 
 export const handleConn = async (conn) => {
-  await conn.write(encode("ENTER YOUR Command: "));
-  const buf = new Uint8Array(1024);
-  const readBytes = await conn.read(buf);
-  const req = decode(buf.slice(0, readBytes)).trim();
-  await router(req, conn);
+  await conn.write(encode("ENTER YOUR Command: ")); // sign up
+
+  const buffer = new Uint8Array(1024);
+  const readBytes = await conn.read(buffer);
+  const request = decode(buffer.slice(0, readBytes)).trim();
+  const response = await userRequestHandler(request, conn);
+  console.log(response);
 
   conn.close();
 };
