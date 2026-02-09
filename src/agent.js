@@ -1,6 +1,6 @@
 import { getTypingStats } from "./monkey-type.js";
 import { getParagraph } from "./paragraph-api.js";
-import { addCredentials } from "./api.js";
+import { createUser } from "./api.js";
 
 const decode = (data) => new TextDecoder().decode(data);
 const encode = (data) => new TextEncoder().encode(data);
@@ -32,7 +32,7 @@ const startTypingSession = async (conn) => {
   console.log(userInput, para, typingMetrics);
 };
 
-const getUserCredentials = () => {
+const getUserCredentials = () => { // Ui Part
   const usersCredentials = {
     "userId": "username123",
     "userName": "username",
@@ -45,10 +45,13 @@ const getUserCredentials = () => {
 };
 
 const users = {};
+
+const typingStats = {}; // change to db later
+
 const apiHandler = (command, usersCredentials) => {
   switch (command) {
     case "CREATE_USER":
-      return addCredentials(usersCredentials, users);
+      return createUser(usersCredentials, users, typingStats);
   }
 };
 
@@ -59,7 +62,6 @@ const signUp = (conn) => {
 };
 
 const userRequestHandler = async (request, conn) => {
-  const { command, data } = request;
   switch (request) {
     case "start":
       return await startTypingSession(conn);
@@ -75,6 +77,9 @@ export const handleConn = async (conn) => {
   const readBytes = await conn.read(buffer);
   const request = decode(buffer.slice(0, readBytes)).trim();
   const response = await userRequestHandler(request, conn);
+
+  console.log(typingStats, users);
+
   console.log(response);
 
   conn.close();

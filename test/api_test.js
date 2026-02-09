@@ -1,8 +1,8 @@
 import { beforeEach, describe, it } from "@std/testing/bdd";
 import { assertEquals } from "@std/assert";
 import {
-  addCredentials,
   addUser,
+  createUser,
   fetchUsers,
   updateUserStats,
 } from "../src/api.js";
@@ -18,7 +18,7 @@ describe("typing-monkey", () => {
         password: "12345",
         userId: "someone123",
       };
-      assertEquals(addCredentials(request, usersCredentials), {
+      assertEquals(createUser(request, usersCredentials), {
         success: true,
         body: {
           userId: "someone123",
@@ -36,7 +36,7 @@ describe("typing-monkey", () => {
         password: "12345",
         userId: "someone123",
       };
-      assertEquals(addCredentials(request, usersCredentials), {
+      assertEquals(createUser(request, usersCredentials), {
         success: true,
         body: {
           userId: "someone123",
@@ -47,7 +47,7 @@ describe("typing-monkey", () => {
       assertEquals(usersCredentials, {
         "someone123": { userName: "someone", password: "12345" },
       });
-      assertEquals(addCredentials(request, usersCredentials), {
+      assertEquals(createUser(request, usersCredentials), {
         success: false,
         body: {},
         error: {

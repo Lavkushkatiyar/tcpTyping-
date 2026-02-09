@@ -10,7 +10,14 @@ const createFailureResponse = (error) => ({
   error,
 });
 
-export const addCredentials = (usersCredentials, users) => {
+export const createUser = (usersCredentials, users, typingStats) => {
+  if (usersCredentials.userId === undefined) {
+    return createFailureResponse({
+      errorCode: 11,
+      errorMessage: `Error: userId is undefined`,
+    });
+  }
+
   if (usersCredentials.userId in users) {
     return createFailureResponse({
       errorCode: 10,
@@ -22,38 +29,9 @@ export const addCredentials = (usersCredentials, users) => {
     userName: usersCredentials.userName,
     password: usersCredentials.password,
   };
-  return createSuccessResponse({
-    userId: usersCredentials.userId,
-    userName: users[usersCredentials.userId].userName,
-  });
-};
 
-const getRandomNumber = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-export const fetchPara = (paragraphs) => {
-  const randomId = getRandomNumber(1, paragraphs.length);
-  return createSuccessResponse(paragraphs.paragraphs[randomId]);
-};
-
-export const addUser = (users, data) => {
-  if (data.userId === undefined) {
-    return createFailureResponse({
-      errorCode: 11,
-      errorMessage: `Error: userId is undefined`,
-    });
-  }
-
-  if (data.userName === undefined) {
-    return createFailureResponse({
-      errorCode: 11,
-      errorMessage: `Error: userName is undefined`,
-    });
-  }
-
-  users[data.userId] = {
-    userName: data.userName,
+  typingStats[usersCredentials.userId] = {
+    userName: usersCredentials.userName,
     stats: {
       "grossWPM": 0,
       "rawWPM": 0,
@@ -61,7 +39,10 @@ export const addUser = (users, data) => {
     },
   };
 
-  return createSuccessResponse({ userId: data.userId, ...users[data.userId] });
+  return createSuccessResponse({
+    userId: usersCredentials.userId,
+    userName: users[usersCredentials.userId].userName,
+  });
 };
 
 export const fetchUsers = (users) => {
