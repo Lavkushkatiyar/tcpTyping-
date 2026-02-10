@@ -86,7 +86,7 @@ i have to get the input from the user in sequence
 
 # error handling
 
-input validation user validation
+input validation user validation if user is not able to login tell him to signup
 
 # formatting the output
 

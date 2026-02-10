@@ -1,5 +1,8 @@
 import { createUser, doesUserExist, validateUser } from "./user_services.js";
 
+const decode = (data) => new TextDecoder().decode(data);
+const encode = (data) => new TextEncoder().encode(data);
+
 const handler = (command, usersCredentials, users, typingStats) => {
   switch (command) {
     case "CREATE_USER":
@@ -9,20 +12,39 @@ const handler = (command, usersCredentials, users, typingStats) => {
   }
 };
 
-const getUserCredentials = (conn) => {
+const readFromConnection = async (conn) => {
+  const buffer = new Uint8Array(1024);
+  const readBytes = await conn.read(buffer);
+  return new decode(buffer.slice(0, readBytes)).trim();
+};
+
+const readLine = async (conn, prompt) => {
+  conn.write(encode(prompt));
+  return await readFromConnection(conn);
+};
+
+const getUserCredentials = async (conn) => {
   const usersCredentials = {
-    userId: "username123",
-    userName: "username",
-    password: "12345",
+    userId: "",
+    userName: "",
+    password: "",
   };
 
-  // prompt user input
-  // parse
+  const fields = [
+    { key: "userId", prompt: "Enter user ID: " },
+    { key: "userName", prompt: "Enter username: " },
+    { key: "password", prompt: "Enter password: " },
+  ];
+
+  for (const field of fields) {
+    usersCredentials[field.key] = await readLine(conn, field.prompt);
+  }
+
   return usersCredentials;
 };
 
-export const userSignUp = (conn, users, typingStats) => {
-  const usersCredentials = getUserCredentials(conn);
+export const userSignUp = async (conn, users, typingStats) => {
+  const usersCredentials = await getUserCredentials(conn);
 
   if (!doesUserExist(usersCredentials, users)) {
     const response = handler(
@@ -39,8 +61,8 @@ export const userSignUp = (conn, users, typingStats) => {
   return { conn, error: "can't sign Up" };
 };
 
-export const userLogin = (conn, users) => {
-  const usersCredentials = getUserCredentials(conn);
+export const userLogin = async (conn, users) => {
+  const usersCredentials = await getUserCredentials(conn);
   const response = handler("LOGIN_USER", usersCredentials, users);
 
   if (response.success) {
