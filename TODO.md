@@ -72,10 +72,38 @@ userSession = {
   fix the structure
 
 
-  
+  ****
   extract functions into respected files if possible 
 we have to implement Deno.serve add consistency in the code by making response
 consistent
 
-we wil
+we will
 ```
+
+# input from the user
+
+i have to get the input from the user in sequence
+
+# error handling
+
+input validation user validation
+
+# formatting the output
+
+we have to format the output to the user
+
+```
+Rafiya
+```
+
+# getLeaderBoard()
+
+it have to give all the user's data
+
+# update the wpm
+
+it should only happen if the current wpm is better than before .
+
+# implement an db
+
+right now we will use only the json files to store the data
