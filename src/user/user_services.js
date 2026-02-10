@@ -67,11 +67,13 @@ export const updateUserStats = (typingStats, userId, data) => {
     });
   }
 
-  typingStats[userId].stats = data;
+  if (typingStats[userId].stats.grossWPM < data.grossWPM) {
+    typingStats[userId].stats = data;
+  }
 
   return createSuccessResponse({ userId, ...typingStats[userId] });
 };
 
 export const getStats = (typingStats) => {
   return createSuccessResponse(typingStats);
-}
+};

@@ -120,6 +120,54 @@ describe("typing-monkey", () => {
         },
       );
     });
+
+    it("update only when grossWPM is better than previous", () => {
+      const typingStats = {
+        "abc123": {
+          "userName": "abc",
+          "stats": {
+            "grossWPM": 0,
+            "rawWPM": 0,
+            "accuracy": 0,
+          },
+        },
+      };
+
+      updateUserStats(typingStats, "abc123", {
+        "grossWPM": 1,
+        "rawWPM": 1,
+        "accuracy": 1,
+      });
+
+      assertEquals(typingStats["abc123"].stats, {
+        "grossWPM": 1,
+        "rawWPM": 1,
+        "accuracy": 1,
+      });
+    });
+
+    it("should not update if current grossWPM is less than previous", () => {
+      const typingStats = {
+        "abc123": {
+          "userName": "abc",
+          "stats": {
+            "grossWPM": 11,
+            "rawWPM": 11,
+            "accuracy": 11,
+          },
+        },
+      };
+      updateUserStats(typingStats, "abc123", {
+        "grossWPM": 0,
+        "rawWPM": 0,
+        "accuracy": 0,
+      });
+      assertEquals(typingStats["abc123"].stats, {
+        "grossWPM": 11,
+        "rawWPM": 11,
+        "accuracy": 11,
+      });
+    });
   });
 
   describe("getStats", () => {
