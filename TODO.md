@@ -86,12 +86,12 @@ i have to get the input from the user in sequence [done]
 
 # error handling
 
-- input validation user validation
-- if user is not able to login tell him to signup
+- input validation user validation[done]
+- if user is not able to login tell him to signup[done]
 
 # formatting the output
 
-we have to format the output to the user
+we have to format the output to the user[done]
 
 ```
 Rafiya
@@ -99,7 +99,7 @@ Rafiya
 
 # getLeaderBoard()
 
-it have to give all the user's data
+it have to give all the user's data[done]
 
 # update the wpm
 
@@ -108,3 +108,11 @@ it should only happen if the current wpm is better than before .
 # implement an db
 
 right now we will use only the json files to store the data
+
+# options
+
+start and leaderboard
+
+# functionality
+
+sort the leaderboard [lavkush]
