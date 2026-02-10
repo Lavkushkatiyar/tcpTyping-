@@ -82,11 +82,12 @@ we will
 
 # input from the user
 
-i have to get the input from the user in sequence
+i have to get the input from the user in sequence [done]
 
 # error handling
 
-input validation user validation if user is not able to login tell him to signup
+- input validation user validation
+- if user is not able to login tell him to signup
 
 # formatting the output
 

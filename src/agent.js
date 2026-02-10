@@ -2,6 +2,7 @@ import { getTypingStats } from "./typing_stats.js";
 import { getParagraph } from "./paragraph_api.js";
 import { updateUserStats } from "./user/user_services.js";
 import { userLogin, userSignUp } from "./user/user_auth.js";
+import { formatTypingStats } from "./typing_metrics.js";
 
 const decode = (data) => new TextDecoder().decode(data);
 const encode = (data) => new TextEncoder().encode(data);
@@ -27,11 +28,10 @@ const startTypingSession = async ({ conn, userId }, typingStats) => {
     userTypedWords: userInput.split(""),
     startTime,
   });
-  console.log(typingMetrics);
 
   updateUserStats(typingStats, userId, typingMetrics);
-
-  await sendTypingResult(conn, typingMetrics);
+  const userTypingReport = formatTypingStats(typingMetrics);
+  await sendTypingResult(conn, userTypingReport);
 };
 
 const userRequestHandler = async (request, userSession, typingStats) => {
@@ -49,12 +49,14 @@ const signInOrLogin = async (conn, users, typingStats) => {
     "login": userLogin,
   };
 
-  await conn.write(encode("login or signup: "));
+  await conn.write(encode("login or signUp: "));
 
   const command = await readFromConnection(conn);
+
   if (authRouter[command]) {
     return authRouter[command](conn, users, typingStats);
   }
+  return { success: false, error: "userExited" };
 };
 
 const readFromConnection = async (conn) => {
@@ -64,14 +66,45 @@ const readFromConnection = async (conn) => {
 };
 
 export const handleConn = async (conn, typingStats, users) => {
-  const userSession = await signInOrLogin(conn, users, typingStats);
-  console.log(typingStats);
+  const userSession = await establishUserSession(conn, users, typingStats);
+  if (!userSession) {
+    conn.close();
+    return;
+  }
 
-  await conn.write(encode("ENTER YOUR Command: "));
-  const request = await readFromConnection(conn);
-  const response = await userRequestHandler(request, userSession, typingStats);
-
-  console.log(typingStats);
-
+  await runUserCommandLoop(conn, userSession, typingStats);
   conn.close();
 };
+
+async function establishUserSession(conn, users, typingStats) {
+  while (true) {
+    const session = await signInOrLogin(conn, users, typingStats);
+
+    if (session.error) {
+      await conn.write(encode(session.error));
+      if (session.error === "userExited") {
+        return null;
+      }
+      continue;
+    }
+
+    return session;
+  }
+}
+
+async function runUserCommandLoop(conn, userSession, typingStats) {
+  console.log(typingStats);
+
+  while (true) {
+    await conn.write(encode("Enter 'start' to start: "));
+    const request = await readFromConnection(conn);
+
+    if (request === "q") {
+      return;
+    }
+
+    await userRequestHandler(request, userSession, typingStats);
+
+    console.log(typingStats);
+  }
+}
