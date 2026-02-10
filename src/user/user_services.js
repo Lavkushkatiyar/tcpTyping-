@@ -71,3 +71,7 @@ export const updateUserStats = (typingStats, userId, data) => {
 
   return createSuccessResponse({ userId, ...typingStats[userId] });
 };
+
+export const getStats = (typingStats) => {
+  return createSuccessResponse(typingStats);
+}
