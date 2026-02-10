@@ -1,6 +1,10 @@
 import { beforeEach, describe, it } from "@std/testing/bdd";
 import { assertEquals } from "@std/assert";
-import { createUser, updateUserStats } from "../src/user/user_services.js";
+import {
+  createUser,
+  getStats,
+  updateUserStats,
+} from "../src/user/user_services.js";
 
 describe("typing-monkey", () => {
   describe("addUserCredentials", () => {
@@ -115,6 +119,23 @@ describe("typing-monkey", () => {
           },
         },
       );
+    });
+  });
+
+  describe("getStats", () => {
+    const typingStats = {
+      "abc123": {
+        userName: "abc",
+        stats: {
+          "grossWPM": 0,
+          "rawWPM": 0,
+          "accuracy": 0,
+        },
+      },
+    };
+    it("get stats", () => {
+      const response = getStats(typingStats);
+      assertEquals(response.success, true);
     });
   });
 });
