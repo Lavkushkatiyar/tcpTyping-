@@ -13,7 +13,7 @@ export const formatTypingStats = ({ grossWPM, rawWPM, accuracy }) => {
   const resultMessage = `Typing Results:\n
       Gross WPM : ${grossWPM.toFixed(2)} WPM\n
       Raw WPM   : ${rawWPM.toFixed(2)} WPM\n
-      Accuracy  : ${accuracy} %`;
+      Accuracy  : ${accuracy} % \n\n`;
 
   return resultMessage;
 };

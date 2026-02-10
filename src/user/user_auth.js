@@ -15,7 +15,8 @@ const handler = (command, usersCredentials, users, typingStats) => {
 const readFromConnection = async (conn) => {
   const buffer = new Uint8Array(1024);
   const readBytes = await conn.read(buffer);
-  return new decode(buffer.slice(0, readBytes)).trim();
+
+  return decode(buffer.slice(0, readBytes)).trim();
 };
 
 const readLine = async (conn, prompt) => {
@@ -31,13 +32,13 @@ const getUserCredentials = async (conn) => {
   };
 
   const fields = [
-    { key: "userId", prompt: "Enter user ID: " },
-    { key: "userName", prompt: "Enter username: " },
-    { key: "password", prompt: "Enter password: " },
+    { key: "userId", prompt: "\nEnter user ID: " },
+    { key: "userName", prompt: "\nEnter username: " },
+    { key: "password", prompt: "\nEnter password: " },
   ];
 
-  for (const field of fields) {
-    usersCredentials[field.key] = await readLine(conn, field.prompt);
+  for (const { key, prompt } of fields) {
+    usersCredentials[key] = await readLine(conn, prompt);
   }
 
   return usersCredentials;
@@ -58,7 +59,7 @@ export const userSignUp = async (conn, users, typingStats) => {
     }
   }
 
-  return { conn, error: "can't sign Up" };
+  return { conn, error: "user already exist \n" };
 };
 
 export const userLogin = async (conn, users) => {
@@ -69,5 +70,5 @@ export const userLogin = async (conn, users) => {
     return { conn, userId: response.body.userId };
   }
 
-  return { conn, error: "can't login " };
+  return { conn, error: "Password or userId is incorrect \n" };
 };
