@@ -7,7 +7,7 @@ const main = async () => {
     port: 8000,
   });
 
-  console.log("server started on hostname : 192.168.1.66");
+  console.log("server started : ");
   for await (const conn of listener) {
     console.log("connection established");
 

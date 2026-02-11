@@ -65,18 +65,7 @@ const readFromConnection = async (conn) => {
   return decode(buffer.slice(0, readBytes)).trim();
 };
 
-export const handleConn = async (conn, typingStats, users) => {
-  const userSession = await establishUserSession(conn, users, typingStats);
-  if (!userSession) {
-    conn.close();
-    return;
-  }
-
-  await runUserCommandLoop(conn, userSession, typingStats);
-  conn.close();
-};
-
-async function establishUserSession(conn, users, typingStats) {
+const establishUserSession = async (conn, users, typingStats) => {
   while (true) {
     const session = await signInOrLogin(conn, users, typingStats);
 
@@ -90,9 +79,9 @@ async function establishUserSession(conn, users, typingStats) {
 
     return session;
   }
-}
+};
 
-async function runUserCommandLoop(conn, userSession, typingStats) {
+const runUserCommandLoop = async (conn, userSession, typingStats) => {
   console.log(typingStats);
 
   while (true) {
@@ -107,4 +96,15 @@ async function runUserCommandLoop(conn, userSession, typingStats) {
 
     console.log(typingStats);
   }
-}
+};
+
+export const handleConn = async (conn, typingStats, users) => {
+  const userSession = await establishUserSession(conn, users, typingStats);
+  if (!userSession) {
+    conn.close();
+    return;
+  }
+
+  await runUserCommandLoop(conn, userSession, typingStats);
+  conn.close();
+};
